@@ -1,9 +1,11 @@
+const path = require("path");
+
 /**
  * Prepares app for Gatsby enviroment
  * @param {object} {app} - server client configuration of gatsby-plugin-nodejs
  * @param {function} cb - callback with rest of app logic inside
  */
-function prepare({ app, framework = "express", path = "/" }, cb) {
+function prepare({ app, framework = "express", pathPrefix = "/" }, cb) {
   switch (framework) {
     case "express":
       const express = require("express");
@@ -18,7 +20,7 @@ function prepare({ app, framework = "express", path = "/" }, cb) {
   switch (framework) {
     case "express":
       app.use((req, res) => {
-        res.status(404).send("public/404.html");
+        res.sendFile(path.resolve("./public", "404.html"));
       });
   }
 }
