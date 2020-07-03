@@ -69,9 +69,9 @@ When the server is set up, add an npm script:
 
 ```json
 {
-  /* Rest of package.json */
+  "_comment": "...rest of your package.json",
   "scripts": {
-    /* ALl the Gatsby scripts */
+    "_comment": "...rest of your npm scripts",
     "start": "node server/index.js"
   }
 }
