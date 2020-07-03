@@ -65,6 +65,20 @@ The `prepare` function accepts the config object as the first argument:
 
 And a callback function as a second. It is executed just before 404 page route is defined, and should contain all your routes like API, etc.
 
+When the server is set up, add an npm script:
+
+```json
+{
+  /* Rest of package.json */
+  "scripts": {
+    /* ALl the Gatsby scripts */
+    "start": "node server/index.js"
+  }
+}
+```
+
+Next build the page using `gatsby build`, and your server is ready to launch (`npm start`)
+
 ### Examples
 
 - Basic example using all the features with Express https://github.com/AdamSiekierski/gatsby-plugin-nodejs/tree/master/example
@@ -76,6 +90,7 @@ And a callback function as a second. It is executed just before 404 page route i
 - [ ] Run server on build, so that Gatsby could be able to fetch data from it
 - [ ] Run server along with development server
 - [ ] Integration with other Node.js frameworks like Koa or Fastify
+- [ ] If the site isn't built when server is launched, build it automatically
 
 ### License
 

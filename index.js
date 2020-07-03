@@ -15,7 +15,7 @@ function prepare({ app, framework = "express" }, cb) {
   forFramework(framework, {
     express: () => {
       const express = require("express");
-      app.use(pathPrefix, express.static("public"));
+      app.use("/", express.static("public"));
     },
   })();
 
