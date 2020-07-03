@@ -11,6 +11,16 @@
   <img src="https://img.shields.io/github/package-json/v/adamsiekierski/gatsby-plugin-nodejs?style=flat-square">
 </p>
 
+### About
+
+`gatsby-plugin-nodejs` gives you a way to integrate your Gatsby site with a custom Node.js server. Use your favorite backend framework and set up your Gatsby.js site normally - the plugin will take care of everything:
+
+- Serving built site
+- 404 page middleware
+- Gatsby redirects
+- Client-side paths
+- Running the server during the build, so that you can fetch the data from your API during build
+
 ### Installation
 
 Install the plugin using npm or yarn
@@ -87,7 +97,7 @@ Next build the page using `gatsby build`, and your server is ready to launch (`n
 
 - [x] Integration with Express.js
 - [ ] Support for creating pathPrefix
-- [ ] Run server on build, so that Gatsby could be able to fetch data from it
+- [x] Run server on build, so that Gatsby could be able to fetch data from it
 - [ ] Run server along with development server
 - [ ] Integration with other Node.js frameworks like Koa or Fastify
 - [ ] If the site isn't built when server is launched, build it automatically

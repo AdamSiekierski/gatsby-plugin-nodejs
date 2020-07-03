@@ -1,6 +1,6 @@
 {
   "name": "gatsby-plugin-nodejs",
-  "version": "0.2.2",
+  "version": "0.3.0",
   "description": "Gatsby plugin for integration with Node.js servers. ",
   "main": "index.js",
   "repository": "git@github.com:AdamSiekierski/gatsby-plugin-nodejs.git",
