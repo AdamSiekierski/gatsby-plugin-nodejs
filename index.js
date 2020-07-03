@@ -1,31 +1,37 @@
 const path = require("path");
 const fs = require("fs");
 
+function forFramework(framework, handlers) {
+  handlers[framework]();
+}
+
 /**
  * Prepares app for Gatsby enviroment
- * @param {object} {app} - server client configuration of gatsby-plugin-nodejs
+ * @param {object} config - server client configuration of gatsby-plugin-nodejs
  * @param {function} cb - callback with rest of app logic inside
  */
 function prepare({ app, framework = "express", pathPrefix = "/" }, cb) {
-  const config = JSON.parse(fs.readFileSync(path.resolve("./public", "gatsby-plugin-node.json")));
-
-  switch (framework) {
-    case "express":
+  // Serve static Gatsby files
+  forFramework(framework, {
+    express: () => {
       const express = require("express");
       app.use(pathPrefix, express.static("public"));
-      break;
-    default:
-      throw new Error(`Unsupported framework: ${framework}`);
-  }
+    },
+  });
 
+  const config = JSON.parse(fs.readFileSync(path.resolve("./public", "gatsby-plugin-node.json")));
+
+  // User-defined routes
   cb();
 
-  switch (framework) {
-    case "express":
+  // Gatsby 404 page
+  forFramework(framework, {
+    express: () => {
       app.use((req, res) => {
         res.sendFile(path.resolve("./public", "404.html"));
       });
-  }
+    },
+  });
 }
 
 module.exports = {
