@@ -1,4 +1,5 @@
 const path = require("path");
+const fs = require("fs");
 
 /**
  * Prepares app for Gatsby enviroment
@@ -6,10 +7,12 @@ const path = require("path");
  * @param {function} cb - callback with rest of app logic inside
  */
 function prepare({ app, framework = "express", pathPrefix = "/" }, cb) {
+  const config = JSON.parse(fs.readFileSync(path.resolve("./public", "gatsby-plugin-node.json")));
+
   switch (framework) {
     case "express":
       const express = require("express");
-      app.use(path, express.static("public"));
+      app.use(pathPrefix, express.static("public"));
       break;
     default:
       throw new Error(`Unsupported framework: ${framework}`);

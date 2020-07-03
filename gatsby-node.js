@@ -1,12 +1,20 @@
 const fs = require("fs");
 
 exports.onPostBuild = function ({ store }) {
-  const { pages } = store.getState();
+  const { pages, redirects } = store.getState();
 
   const p = [];
-  for (let page of pages) {
-    p.push(page);
+  for (const page of pages.values()) {
+    p.push({
+      matchPath: page.matchPath,
+      path: page.path,
+    });
   }
 
-  fs.writeFileSync("public/gatsby-node-pages.json", p);
+  const config = {
+    paths: p,
+    redirects,
+  };
+
+  fs.writeFileSync("public/gatsby-plugin-node.json", JSON.stringify(config, null, 2));
 };

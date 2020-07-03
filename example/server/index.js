@@ -3,7 +3,7 @@ const gatsby = require("../../")
 
 const app = express()
 
-gatsby.prepare({ app, framework: "express" }, () => {})
+gatsby.prepare({ app }, () => {})
 
 const port = process.env.PORT || 1337
 
