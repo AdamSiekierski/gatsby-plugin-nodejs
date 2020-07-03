@@ -1,6 +1,10 @@
 const path = require("path");
 const fs = require("fs");
 
+// Disable gatsby files serving, for example when building the site
+const args = process.argv.slice(2);
+const disableGatsby = args.includes("--no-gatsby");
+
 function forFramework(framework, handlers) {
   return handlers[framework];
 }
@@ -11,49 +15,53 @@ function forFramework(framework, handlers) {
  * @param {function} cb - callback with rest of app logic inside
  */
 function prepare({ app, framework = "express" }, cb) {
-  // Serve static Gatsby files
-  forFramework(framework, {
-    express: () => {
-      const express = require("express");
-      app.use("/", express.static("public"));
-    },
-  })();
-
-  const config = JSON.parse(fs.readFileSync(path.resolve("./public", "gatsby-plugin-node.json")));
-
-  // Gatsby redirects
-  for (const r of config.redirects) {
+  if (!disableGatsby) {
+    // Serve static Gatsby files
     forFramework(framework, {
       express: () => {
-        app.get(r.fromPath, (req, res) =>
-          res.status(r.statusCode || r.isPermanent ? 301 : 302).redirect(r.toPath),
-        );
+        const express = require("express");
+        app.use("/", express.static("public"));
       },
     })();
-  }
 
-  // Client paths
-  for (const p of config.paths.filter((p) => p.matchPath)) {
-    forFramework(framework, {
-      express: () => {
-        app.get(p.matchPath, (req, res) =>
-          res.sendFile(path.resolve("./public", p.path, "index.html")),
-        );
-      },
-    });
+    const config = JSON.parse(fs.readFileSync(path.resolve("./public", "gatsby-plugin-node.json")));
+
+    // Gatsby redirects
+    for (const r of config.redirects) {
+      forFramework(framework, {
+        express: () => {
+          app.get(r.fromPath, (req, res) =>
+            res.status(r.statusCode || r.isPermanent ? 301 : 302).redirect(r.toPath),
+          );
+        },
+      })();
+    }
+
+    // Client paths
+    for (const p of config.paths.filter((p) => p.matchPath)) {
+      forFramework(framework, {
+        express: () => {
+          app.get(p.matchPath, (req, res) =>
+            res.sendFile(path.resolve("./public", p.path, "index.html")),
+          );
+        },
+      });
+    }
   }
 
   // User-defined routes
   cb();
 
-  // Gatsby 404 page
-  forFramework(framework, {
-    express: () => {
-      app.use((req, res) => {
-        res.sendFile(path.resolve("./public", "404.html"));
-      });
-    },
-  })();
+  if (!disableGatsby) {
+    // Gatsby 404 page
+    forFramework(framework, {
+      express: () => {
+        app.use((req, res) => {
+          res.sendFile(path.resolve("./public", "404.html"));
+        });
+      },
+    })();
+  }
 }
 
 module.exports = {
