@@ -20,6 +20,7 @@
 - Gatsby redirects
 - Client-side paths
 - Running the server during the build, so that you can fetch the data from your API during build
+- Serving the site with pathPrefix - set it up inside `gatsby-config.js`, the plugin will take care of it
 
 ### Installation
 
@@ -43,7 +44,7 @@ module.exports = {
 
 ### Usage
 
-1. Create an index.js file inside `server` directory in your Gatsby page project
+1. Create an `index.js` file inside `server` directory in your Gatsby page project
 2. Create the base of web server using your favourite framework
 3. Initialize Gatsby in your server
 
@@ -96,11 +97,12 @@ Next build the page using `gatsby build`, and your server is ready to launch (`n
 ### Todo
 
 - [x] Integration with Express.js
-- [ ] Support for creating pathPrefix
+- [x] Support for creating pathPrefix
 - [x] Run server on build, so that Gatsby could be able to fetch data from it
 - [ ] Run server along with development server
 - [ ] Integration with other Node.js frameworks like Koa or Fastify
 - [ ] If the site isn't built when server is launched, build it automatically
+- [ ] Custom server filename and location
 
 ### License
 

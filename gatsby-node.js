@@ -4,7 +4,7 @@ const { exec } = require("child_process");
 let proc = null;
 
 exports.onPreInit = function () {
-  return new Promise((resolve) => {
+  return new Promise((resolve, reject) => {
     if (fs.existsSync("server/index.js")) {
       console.log("Starting the custom Node.js server for the build...");
       proc = exec("node server/index.js");
@@ -14,12 +14,15 @@ exports.onPreInit = function () {
         resolve();
       });
 
-      proc.on("error", (err) => console.log(err));
+      proc.on("error", (err) => {
+        console.log(`Custom server error: ${err}`);
+        reject();
+      });
     }
   });
 };
 
-exports.onPostBuild = function ({ store }) {
+exports.onPostBuild = function ({ store, pathPrefix }) {
   const { pages, redirects } = store.getState();
 
   const p = [];
@@ -33,6 +36,7 @@ exports.onPostBuild = function ({ store }) {
   const config = {
     paths: p,
     redirects,
+    pathPrefix,
   };
 
   fs.writeFileSync("public/gatsby-plugin-node.json", JSON.stringify(config, null, 2));
