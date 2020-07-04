@@ -1,5 +1,5 @@
 <p align="center">
-  <img align="center" src="./logo.png">
+  <img align="center" src="https://raw.githubusercontent.com/AdamSiekierski/gatsby-plugin-nodejs/master/logo.png">
 </p>
 <p align="center">
   <h2 align="center">gatsby-plugin-nodejs</h2>
