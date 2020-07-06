@@ -15,6 +15,9 @@
 
 `gatsby-plugin-nodejs` gives you a way to integrate your Gatsby site with a custom Node.js server. Use your favorite backend framework and set up your Gatsby.js site normally - the plugin will take care of everything:
 
+- Supported frameworks:
+  - Express
+  - Fastify 2.x
 - Serving built site
 - 404 page middleware
 - Gatsby redirects
@@ -45,9 +48,13 @@ module.exports = {
 
 ### Usage
 
-1. Create an `index.js` file inside `server` directory in your Gatsby page project
-2. Create the base of web server using your favourite framework
-3. Initialize Gatsby in your server
+Install the plugin as shown above, and create an `index.js` file inside `server` directory of your project
+
+#### With Express
+
+First install `express` as a dependency to your project - `npm i express --save`
+
+Next, create a base of an Express server, and initialize Gatsby.
 
 ```js
 const express = require("express");
@@ -64,16 +71,40 @@ const port = process.env.PORT || 1337;
 app.listen(port, () => console.log(`listening on port ${port}`));
 ```
 
+#### With Fastify
+
+Install `fastify` 2.x and `fastify-static` as dependencies to your project - `npm i fastify fastify-static --save`
+
+Next, create a basic Fastify server, and initialize Gatsby.
+
+```js
+const fastify = require("fastify")();
+const gatsby = require("gatsby-plugin-nodejs");
+
+gatsby.prepare({ app: fastify, framework: "fastify" }, () => {});
+
+const port = process.env.PORT || 1337;
+
+fastify.listen(port, (err) => {
+  if (err) {
+    console.log(err);
+    process.exit(1);
+  }
+
+  console.log(`listening on port ${port}`);
+});
+```
+
 As you can see, you'll need to use `prepare` function. It creates a middleware, that serves static files, defines routes that handle Gatsby redirects and client paths, and sets up the 404 page.
 
 Under the hood, your routes are added to server at the end, just before the 404 page route.
 
 The `prepare` function accepts the config object as the first argument:
 
-| Property    | Value    | Description                                                                                    |
-| ----------- | -------- | ---------------------------------------------------------------------------------------------- |
-| `app`       | `object` | App instance of your framework (currently we support only Express)                             |
-| `framework` | `string` | If you use framework other than Express, pass a string with its name (currently not supported) |
+| Property    | Value    | Description                                                          |
+| ----------- | -------- | -------------------------------------------------------------------- |
+| `app`       | `object` | App instance of your framework                                       |
+| `framework` | `string` | If you use framework other than Express, pass a string with its name |
 
 And a callback function as a second. It is executed just before 404 page route is defined, and should contain all your routes like API, etc.
 
@@ -93,7 +124,8 @@ Next build the page using `gatsby build`, and your server is ready to launch (`n
 
 ### Examples
 
-- Basic example using all the features with Express https://github.com/AdamSiekierski/gatsby-plugin-nodejs/tree/master/example
+- Basic example with Express - https://github.com/AdamSiekierski/gatsby-plugin-nodejs-example-express/
+- Basic example with Fastify - https://github.com/AdamSiekierski/gatsby-plugin-nodejs-example-fastify/
 
 ### Todo
 
@@ -101,7 +133,8 @@ Next build the page using `gatsby build`, and your server is ready to launch (`n
 - [x] Support for creating pathPrefix
 - [x] Run server on build, so that Gatsby could be able to fetch data from it
 - [x] Run server along with development server
-- [ ] Integration with other Node.js frameworks like Koa or Fastify
+- [x] Integration with Fastify
+- [ ] Integration with Koa
 - [ ] If the site isn't built when server is launched, build it automatically
 - [ ] Custom server filename and location
 

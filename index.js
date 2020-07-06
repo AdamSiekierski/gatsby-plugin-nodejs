@@ -14,7 +14,12 @@ function prepare({ app, framework = "express" }, cb) {
   const config = JSON.parse(fs.readFileSync(path.resolve("./public", "gatsby-plugin-node.json")));
 
   function forFramework(handlers) {
-    return handlers[framework];
+    return (
+      handlers[framework] ||
+      function () {
+        throw new Error(`Uncompatible framework: ${framework}`);
+      }
+    );
   }
 
   function withPrefix(path) {
@@ -28,6 +33,13 @@ function prepare({ app, framework = "express" }, cb) {
         const express = require("express");
         app.use(withPrefix("/"), express.static("public"));
       },
+      fastify: () => {
+        app.ignoreTrailingSlash = true;
+        app.register(require("fastify-static"), {
+          root: path.resolve("./public"),
+          prefix: withPrefix("/"),
+        });
+      },
     })();
 
     // Gatsby redirects
@@ -40,6 +52,13 @@ function prepare({ app, framework = "express" }, cb) {
             res.status(r.statusCode || r.isPermanent ? 301 : 302).redirect(toPath);
           });
         },
+        fastify: () => {
+          app.get(withPrefix(r.fromPath), (req, reply) => {
+            const toPath = /https?:\/\//.test(r.toPath) ? r.toPath : withPrefix(r.toPath);
+
+            reply.code(r.statusCode || r.isPermanent ? 301 : 302).redirect(toPath);
+          });
+        },
       })();
     }
 
@@ -49,6 +68,11 @@ function prepare({ app, framework = "express" }, cb) {
         express: () => {
           app.get(withPrefix(p.matchPath), (req, res) => {
             res.sendFile(path.resolve("./public", p.path.replace("/", ""), "index.html"));
+          });
+        },
+        fastify: () => {
+          app.get(withPrefix(p.matchPath), (req, reply) => {
+            reply.sendFile(path.resolve("./public", p.path.replace("/", ""), "index.html"));
           });
         },
       })();
@@ -64,6 +88,11 @@ function prepare({ app, framework = "express" }, cb) {
       express: () => {
         app.use((req, res) => {
           res.status(404).sendFile(path.resolve("./public", "404.html"));
+        });
+      },
+      fastify: () => {
+        app.setNotFoundHandler((req, reply) => {
+          reply.sendFile(path.resolve("./public", "404.html"));
         });
       },
     })();
