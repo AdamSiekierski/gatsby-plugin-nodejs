@@ -1,6 +1,8 @@
 const fs = require("fs");
 const { exec } = require("child_process");
 
+const proc = null;
+
 function generateConfig({ pathPrefix, store }) {
   const { pages, redirects } = store.getState();
 
@@ -29,7 +31,7 @@ exports.onPreInit = function ({ pathPrefix, store }) {
   return new Promise((resolve, reject) => {
     if (fs.existsSync("server/index.js")) {
       console.log("Starting the custom Node.js server...");
-      const proc = exec("node server/index.js");
+      proc = exec("node server/index.js");
 
       proc.stdout.on("data", (data) => {
         console.log(`Message from custom server: ${data}`);
@@ -50,6 +52,10 @@ exports.onPreInit = function ({ pathPrefix, store }) {
     }
   });
 };
+
+process.on("beforeExit", () => {
+  proc && proc.kill();
+});
 
 exports.onPostBuild = function ({ store, pathPrefix }) {
   generateConfig({ pathPrefix, store });
