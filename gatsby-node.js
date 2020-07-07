@@ -53,10 +53,10 @@ exports.onPreInit = function ({ pathPrefix, store }) {
   });
 };
 
-process.on("beforeExit", () => {
-  proc && proc.kill();
-});
-
 exports.onPostBuild = function ({ store, pathPrefix }) {
   generateConfig({ pathPrefix, store });
 };
+
+process.on("exit", () => {
+  proc && proc.kill();
+});
