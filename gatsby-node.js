@@ -18,6 +18,8 @@ function generateConfig({ pathPrefix, store }) {
     pathPrefix,
   };
 
+  !fs.existsSync("public/") && fs.mkdirSync("public/");
+
   fs.writeFileSync("public/gatsby-plugin-node.json", JSON.stringify(config, null, 2));
 }
 
