@@ -1,7 +1,7 @@
 const fs = require("fs");
 const { exec } = require("child_process");
 
-const proc = null;
+let proc = null;
 
 function generateConfig({ pathPrefix, store }) {
   const { pages, redirects } = store.getState();
