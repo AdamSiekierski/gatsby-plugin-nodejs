@@ -1,16 +1,11 @@
 {
   "name": "gatsby-plugin-nodejs",
-  "version": "0.6.4",
+  "version": "0.7.0",
   "description": "Gatsby plugin for integration with Node.js servers. ",
   "main": "index.js",
   "repository": "git@github.com:AdamSiekierski/gatsby-plugin-nodejs.git",
   "author": "Adam Siekierski <adam.siekiera@outlook.com>",
   "license": "MIT",
-  "peerDependencies": {
-    "express": "^4.17.1",
-    "fastify": "^2.15.1",
-    "fastify-static": "^2.7.0"
-  },
   "keywords": [
     "gatsby",
     "gatsby-plugin",
@@ -20,5 +15,12 @@
     "express",
     "backend",
     "monolith"
-  ]
+  ],
+  "dependencies": {
+    "chalk": "^4.1.0",
+    "express": "^4.17.1",
+    "fastify": "^2.15.1",
+    "fastify-static": "^2.7.0",
+    "nodemon": "^2.0.4"
+  }
 }

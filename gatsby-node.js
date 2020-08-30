@@ -1,7 +1,14 @@
 const fs = require("fs");
 const { exec } = require("child_process");
+const nodemon = require("nodemon");
+const chalk = require("chalk");
+
+function log(...str) {
+  console.log(chalk.magenta("[custom server]"), ...str);
+}
 
 let proc = null;
+let watchProc = null;
 
 function generateConfig({ pathPrefix, store }) {
   const { pages, redirects } = store.getState();
@@ -30,21 +37,16 @@ exports.onPreInit = function ({ pathPrefix, store }) {
 
   return new Promise((resolve, reject) => {
     if (fs.existsSync("server/index.js")) {
-      console.log("Starting the custom Node.js server...");
-      proc = exec("node server/index.js");
+      log("Starting the custom Node.js server for the buildtime...");
+      proc = exec("node server/index.js --no-gatsby");
 
       proc.stdout.on("data", (data) => {
-        console.log(`Message from custom server: ${data}`);
+        log(`${data}`);
         resolve();
       });
 
-      proc.stderr.on("data", (data) => {
-        console.log(`Error message from custom server: ${data}`);
-        reject();
-      });
-
       proc.on("error", (err) => {
-        console.log(`Custom server error: ${err}`);
+        log(`${err}`);
         reject();
       });
     } else {
@@ -57,6 +59,30 @@ exports.onPostBuild = function ({ store, pathPrefix }) {
   generateConfig({ pathPrefix, store });
 };
 
-process.on("exit", () => {
+exports.onPostBootstrap = function () {
+  // Finish the buildtime custom server
   proc && proc.kill();
-});
+
+  // Run the server via nodemon for the development time
+  if (process.env.NODE_ENV === "development" && fs.existsSync("server/index.js")) {
+    log("Starting the custom server in watch mode using nodemon...");
+
+    return new Promise((resolve, reject) => {
+      watchProc = nodemon({
+        script: "server/index.js",
+        args: ["--no-gatsby"],
+        ignore: ["src", "node_modules", ".cache", "public", "gatsby-*"],
+        ext: "js json ts",
+        stdout: false,
+      });
+
+      watchProc.on("log", ({ colour }) => console.log(colour));
+      watchProc.on("stdout", (data) => {
+        log(String(data));
+      });
+      watchProc.on("start", () => resolve());
+    });
+  }
+};
+
+process.on("beforeExit", () => watchProc.kill());
