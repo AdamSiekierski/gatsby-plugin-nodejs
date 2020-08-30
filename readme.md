@@ -23,7 +23,7 @@
 - Gatsby redirects
 - Client-side paths
 - Running the server during the build, so that you can fetch the data from your API during build
-- Running the server during development, so that you can use your API during the build and inside application
+- Running and automatically restarting the server during development, so that you can develop your backend along with frontend
 - Serving the site with pathPrefix - set it up inside `gatsby-config.js`, the plugin will take care of it
 
 ### Installation
@@ -49,6 +49,8 @@ module.exports = {
 ### Usage
 
 Install the plugin as shown above, and create an `index.js` file inside `server` directory of your project
+
+The server will run automatically during site build, and during development. In addition, when running in development mode (`gatsby develop`), it uses [nodemon](https://github.com/remy/nodemon/) to automatically restart the server, when its' files change.
 
 #### With Express
 
@@ -121,6 +123,8 @@ When the server is set up, add an npm script:
 ```
 
 Next build the page using `gatsby build`, and your server is ready to launch (`npm start`)
+
+The server will launch during the build process, and when running `gatsby develop`. In addition, `gatsby-plugin-nodejs` uses [nodemon](https://github.com/remy/nodemon/), to automatically restart the server when its' files change.
 
 ### Examples
 
