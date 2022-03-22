@@ -36,7 +36,7 @@ exports.onPreInit = function ({ pathPrefix, store }) {
   generateConfig({ pathPrefix, store });
 
   return new Promise((resolve, reject) => {
-    if (fs.existsSync("server/index.js")) {
+    if (fs.existsSync("server/index.js") && process.env.NODE_ENV !== "development") {
       log("Starting the custom Node.js server for the buildtime...");
       proc = exec("node server/index.js --no-gatsby");
 
