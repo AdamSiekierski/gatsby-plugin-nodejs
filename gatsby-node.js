@@ -73,7 +73,7 @@ exports.onPostBootstrap = function () {
         args: ["--no-gatsby"],
         ignore: ["src", "node_modules", ".cache", "public", "gatsby-*"],
         ext: "js json ts",
-        stdout: false,
+        stdout: true,
       });
 
       watchProc.on("log", ({ colour }) => console.log(colour));
