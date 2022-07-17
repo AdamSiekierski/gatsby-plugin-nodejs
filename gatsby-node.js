@@ -36,7 +36,7 @@ exports.onPreInit = function ({ pathPrefix, store }) {
   generateConfig({ pathPrefix, store });
 
   return new Promise((resolve, reject) => {
-    if (fs.existsSync("server/index.js")) {
+    if (fs.existsSync("server/index.js") && process.env.NODE_ENV !== "development") {
       log("Starting the custom Node.js server for the buildtime...");
       proc = exec("node server/index.js --no-gatsby");
 
@@ -73,7 +73,7 @@ exports.onPostBootstrap = function () {
         args: ["--no-gatsby"],
         ignore: ["src", "node_modules", ".cache", "public", "gatsby-*"],
         ext: "js json ts",
-        stdout: false,
+        stdout: true,
       });
 
       watchProc.on("log", ({ colour }) => console.log(colour));
